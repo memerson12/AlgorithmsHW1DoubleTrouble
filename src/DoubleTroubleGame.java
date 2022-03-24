@@ -13,22 +13,24 @@ enum GameColors {
 
 public class DoubleTroubleGame extends JPanel implements ActionListener {
     private static JFrame mainFrame;
-    private final ArrayList<ArrayList<GameTile>> uncapturedGameTiles = new ArrayList<>();
+    private static final ArrayList<ArrayList<GameTile>> uncapturedGameTiles = new ArrayList<>();
     private final ArrayList<GameTile> currentlySelectedTiles = new ArrayList<>();
-    private final ArrayList<GameTile> uncapturedGreenTiles = new ArrayList<>();
-    private final ArrayList<GameTile> uncapturedYellowTiles = new ArrayList<>();
-    private final ArrayList<GameTile> uncapturedOrangeTiles = new ArrayList<>();
-    private final Random rand;
+    private static final ArrayList<GameTile> uncapturedGreenTiles = new ArrayList<>();
+    private static final ArrayList<GameTile> uncapturedYellowTiles = new ArrayList<>();
+    private static final ArrayList<GameTile> uncapturedOrangeTiles = new ArrayList<>();
+    private static Random rand;
     private GameColors currentlySelectedColor = null;
-    private boolean isTournament;
-    private int computerScore;
-    private int playerScore;
+    private static boolean isTournament;
+    private static boolean computerFirst;
+    private static int computerScore;
+    private static int playerScore;
 
-    public DoubleTroubleGame(boolean isTournament, int computerScore, int playerScore) {
+    public DoubleTroubleGame(boolean isTournament, boolean computerFirst, int computerScore, int playerScore) {
         super(new BorderLayout());
         this.isTournament = isTournament;
         this.computerScore = computerScore;
         this.playerScore = playerScore;
+        this.computerFirst = computerFirst;
         rand = new Random();
         uncapturedGameTiles.add(uncapturedGreenTiles);
         uncapturedGameTiles.add(uncapturedYellowTiles);
@@ -58,19 +60,20 @@ public class DoubleTroubleGame extends JPanel implements ActionListener {
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
     }
 
-    public static void createAndShowGUI(JFrame MainFrame, boolean isTournament, int computerScore, int playerScore) {
+    public static void createAndShowGUI(JFrame MainFrame, boolean isTournament, boolean computerFirst, int computerScore, int playerScore) {
         //Create and set up the content pane.
         mainFrame = MainFrame;
-        JComponent newContentPane = new DoubleTroubleGame(isTournament, computerScore, playerScore);
+        JComponent newContentPane = new DoubleTroubleGame(isTournament, computerFirst, computerScore, playerScore);
         newContentPane.setOpaque(true); //content panes must be opaque
         MainFrame.setContentPane(newContentPane);
 
         //Display the window.
         MainFrame.pack();
         MainFrame.setVisible(true);
+        if(computerFirst) computerPlay();
     }
 
-    private void computerPlay() {
+    private static void computerPlay() {
         int greenSize = uncapturedGreenTiles.size();
         int yellowSize = uncapturedYellowTiles.size();
         int orangeSize = uncapturedOrangeTiles.size();
@@ -105,7 +108,7 @@ public class DoubleTroubleGame extends JPanel implements ActionListener {
         }
     }
 
-    private void computerRandomPlay() {
+    private static void computerRandomPlay() {
         int color = rand.nextInt(uncapturedGameTiles.size());
         ArrayList<GameTile> colorList = uncapturedGameTiles.get(color);
         System.out.println(colorList);
@@ -120,7 +123,7 @@ public class DoubleTroubleGame extends JPanel implements ActionListener {
         if (uncapturedGameTiles.size() == 0) endGame("Computer");
     }
 
-    private void endGame(String player) {
+    private static void endGame(String player) {
         JOptionPane.showMessageDialog(null, player + " won!");
         if (isTournament) {
             System.out.println("Computer Score: " + computerScore);
@@ -129,8 +132,8 @@ public class DoubleTroubleGame extends JPanel implements ActionListener {
             } else if (playerScore >= 2) {
                 JOptionPane.showMessageDialog(null, "You won the tournament!");
             } else {
-                if (player.equals("Computer")) createAndShowGUI(mainFrame, true, computerScore+1, playerScore);
-                if (player.equals("Player")) createAndShowGUI(mainFrame, true, computerScore, playerScore+1);
+                if (player.equals("Computer")) createAndShowGUI(mainFrame, true, computerFirst, computerScore+1, playerScore);
+                if (player.equals("Player")) createAndShowGUI(mainFrame, true, computerFirst, computerScore, playerScore+1);
             }
         }
     }
