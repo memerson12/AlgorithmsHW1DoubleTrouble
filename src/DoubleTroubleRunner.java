@@ -1,8 +1,6 @@
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class DoubleTroubleRunner {
     static JFrame frame = new JFrame("Double Trouble");
@@ -21,12 +19,12 @@ public class DoubleTroubleRunner {
         JButton playGameButton = new JButton("Play Game");
         playGameButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         playGameButton.setBorder(border);
-        playGameButton.addActionListener(DoubleTroubleRunner::chooseStartPlayerScreen);
+        playGameButton.addActionListener(actionEvent -> chooseStartPlayerScreen(false));
 
         JButton playTournamentButton = new JButton("Play Tournament");
         playTournamentButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         playTournamentButton.setBorder(border);
-        playTournamentButton.addActionListener(DoubleTroubleRunner::startTournament);
+        playTournamentButton.addActionListener(actionEvent -> chooseStartPlayerScreen(true));
 
         newContentPane.add(header);
         newContentPane.add(playGameButton);
@@ -38,7 +36,7 @@ public class DoubleTroubleRunner {
         frame.setVisible(true);
     }
 
-    private static void chooseStartPlayerScreen(ActionEvent actionEvent) {
+    private static void chooseStartPlayerScreen(boolean isTournament) {
         JComponent newContentPane = new JPanel();
         newContentPane.setLayout(new BoxLayout(newContentPane, BoxLayout.Y_AXIS));
         JLabel header = new JLabel("Double Trouble");
@@ -50,12 +48,12 @@ public class DoubleTroubleRunner {
         JButton playerButton = new JButton("Player First");
         playerButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         playerButton.setBorder(border);
-        playerButton.addActionListener((event) -> startGame( false));
+        playerButton.addActionListener((event) -> startGame(false, isTournament));
 
         JButton computerButton = new JButton("Computer First");
         computerButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         computerButton.setBorder(border);
-        computerButton.addActionListener((event) -> startGame( true));
+        computerButton.addActionListener((event) -> startGame(true, isTournament));
 
         newContentPane.add(header);
         newContentPane.add(playerButton);
@@ -68,11 +66,7 @@ public class DoubleTroubleRunner {
 
     }
 
-    private static void startGame(boolean computerFirst) {
-        DoubleTroubleGame.createAndShowGUI(frame, false, computerFirst, 0, 0);
-    }
-
-    private static void startTournament(ActionEvent actionEvent) {
-        DoubleTroubleGame.createAndShowGUI(frame, true, true, 0, 0);
+    private static void startGame(boolean computerFirst, boolean isTournament) {
+        DoubleTroubleGame.createAndShowGUI(frame, isTournament, computerFirst, 0, 0);
     }
 }

@@ -12,18 +12,18 @@ enum GameColors {
 }
 
 public class DoubleTroubleGame extends JPanel implements ActionListener {
-    private static JFrame mainFrame;
     private static final ArrayList<ArrayList<GameTile>> uncapturedGameTiles = new ArrayList<>();
-    private final ArrayList<GameTile> currentlySelectedTiles = new ArrayList<>();
     private static final ArrayList<GameTile> uncapturedGreenTiles = new ArrayList<>();
     private static final ArrayList<GameTile> uncapturedYellowTiles = new ArrayList<>();
     private static final ArrayList<GameTile> uncapturedOrangeTiles = new ArrayList<>();
+    private static JFrame mainFrame;
     private static Random rand;
-    private GameColors currentlySelectedColor = null;
     private static boolean isTournament;
     private static boolean computerFirst;
     private static int computerScore;
     private static int playerScore;
+    private final ArrayList<GameTile> currentlySelectedTiles = new ArrayList<>();
+    private GameColors currentlySelectedColor = null;
 
     public DoubleTroubleGame(boolean isTournament, boolean computerFirst, int computerScore, int playerScore) {
         super(new BorderLayout());
@@ -38,7 +38,7 @@ public class DoubleTroubleGame extends JPanel implements ActionListener {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         JPanel buttonsPanel = new JPanel();
         buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
-        if(isTournament) {
+        if (isTournament) {
             JLabel score = new JLabel("Computer: " + computerScore + " | You " + playerScore);
             score.setAlignmentX(Component.CENTER_ALIGNMENT);
             score.setFont(new Font("", Font.BOLD, 20));
@@ -57,6 +57,7 @@ public class DoubleTroubleGame extends JPanel implements ActionListener {
         }
         Button doneButton = new Button("End Turn");
         doneButton.addActionListener((actionEvent) -> {
+            if (currentlySelectedTiles.size() == 0) return;
             currentlySelectedTiles.forEach(GameTile::capture);
             currentlySelectedColor = null;
             currentlySelectedTiles.clear();
@@ -78,7 +79,7 @@ public class DoubleTroubleGame extends JPanel implements ActionListener {
         //Display the window.
         MainFrame.pack();
         MainFrame.setVisible(true);
-        if(computerFirst) computerPlay();
+        if (computerFirst) computerPlay();
     }
 
     private static void computerPlay() {
@@ -135,7 +136,7 @@ public class DoubleTroubleGame extends JPanel implements ActionListener {
         JOptionPane.showMessageDialog(null, player + " won!");
         if (isTournament) {
             if (player.equals("Computer")) computerScore++;
-            if (player.equals("Player")) playerScore++;
+            if (player.equals("You")) playerScore++;
             System.out.println("Computer Score: " + computerScore);
             if (computerScore >= 2) {
                 JOptionPane.showMessageDialog(null, "The Computer won the tournament!");
