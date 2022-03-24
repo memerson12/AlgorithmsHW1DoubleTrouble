@@ -35,8 +35,16 @@ public class DoubleTroubleGame extends JPanel implements ActionListener {
         uncapturedGameTiles.add(uncapturedGreenTiles);
         uncapturedGameTiles.add(uncapturedYellowTiles);
         uncapturedGameTiles.add(uncapturedOrangeTiles);
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         JPanel buttonsPanel = new JPanel();
         buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
+        if(isTournament) {
+            JLabel score = new JLabel("Computer: " + computerScore + " | You " + playerScore);
+            score.setAlignmentX(Component.CENTER_ALIGNMENT);
+            score.setFont(new Font("", Font.BOLD, 20));
+            score.setBorder(BorderFactory.createEmptyBorder(10, 10, 30, 10));
+            add(score, BorderLayout.CENTER);
+        }
         add(buttonsPanel, BorderLayout.CENTER);
         for (int row = 0; row < 5; row++) {
             JPanel gamePanel = new JPanel(new FlowLayout());
@@ -81,11 +89,7 @@ public class DoubleTroubleGame extends JPanel implements ActionListener {
             System.out.println("Optimal Play Available");
             int amountToCapture;
             ArrayList<GameTile> tiles;
-            if ((greenSize ^ yellowSize) < orangeSize) {
-                System.out.println("Taking from orange");
-                tiles = uncapturedOrangeTiles;
-                amountToCapture = orangeSize - (greenSize ^ yellowSize);
-            } else if ((greenSize ^ orangeSize) < yellowSize) {
+            if ((greenSize ^ orangeSize) < yellowSize) {
                 System.out.println("Taking from yellow");
                 tiles = uncapturedYellowTiles;
                 amountToCapture = yellowSize - (greenSize ^ orangeSize);
@@ -93,13 +97,17 @@ public class DoubleTroubleGame extends JPanel implements ActionListener {
                 System.out.println("Taking from green");
                 tiles = uncapturedGreenTiles;
                 amountToCapture = greenSize - (yellowSize ^ orangeSize);
+            } else if ((greenSize ^ yellowSize) < orangeSize) {
+                System.out.println("Taking from orange");
+                tiles = uncapturedOrangeTiles;
+                amountToCapture = orangeSize - (greenSize ^ yellowSize);
             } else {
                 computerRandomPlay();
                 return;
             }
             System.out.println("Taking " + amountToCapture + " from " + tiles.get(0).color + " which is of size " + tiles.size());
             for (int i = 0; i < amountToCapture; i++) {
-                tiles.get(0).capture();
+                tiles.get(rand.nextInt(tiles.size())).capture();
             }
             if (tiles.size() == 0) uncapturedGameTiles.remove(tiles);
             if (uncapturedGameTiles.size() == 0) endGame("Computer");
@@ -126,16 +134,24 @@ public class DoubleTroubleGame extends JPanel implements ActionListener {
     private static void endGame(String player) {
         JOptionPane.showMessageDialog(null, player + " won!");
         if (isTournament) {
+            if (player.equals("Computer")) computerScore++;
+            if (player.equals("Player")) playerScore++;
             System.out.println("Computer Score: " + computerScore);
             if (computerScore >= 2) {
                 JOptionPane.showMessageDialog(null, "The Computer won the tournament!");
             } else if (playerScore >= 2) {
                 JOptionPane.showMessageDialog(null, "You won the tournament!");
             } else {
-                if (player.equals("Computer")) createAndShowGUI(mainFrame, true, computerFirst, computerScore+1, playerScore);
-                if (player.equals("Player")) createAndShowGUI(mainFrame, true, computerFirst, computerScore, playerScore+1);
+                createAndShowGUI(mainFrame, true, !computerFirst, computerScore, playerScore);
+                return;
             }
         }
+        quitGame();
+    }
+
+    private static void quitGame() {
+        String[] args = {};
+        DoubleTroubleRunner.main(args);
     }
 
     @Override
