@@ -1,0 +1,2 @@
+The game of Nim was the first partisan or combinatorial game solved. It was solved by Charles L. Bouton and such types
+of games can be seen in popular culture with games like tik-tak-toe and dots and boxes.
